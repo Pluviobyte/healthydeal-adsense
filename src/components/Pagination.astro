@@ -1,0 +1,49 @@
+---
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+}
+
+const { currentPage, totalPages, basePath } = Astro.props as PaginationProps;
+
+const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+const createHref = (page: number) => {
+  if (page === 1) return basePath;
+  return `${basePath}page/${page}/`;
+};
+---
+{totalPages > 1 && (
+  <nav aria-label="Pagination" class="mt-10 flex items-center justify-center gap-2">
+    <a
+      href={currentPage > 1 ? createHref(currentPage - 1) : undefined}
+      class={`rounded-full border border-slate-200 px-3 py-2 text-sm transition-colors duration-150 ${
+        currentPage > 1 ? 'hover:bg-primary/10 hover:text-primary' : 'cursor-not-allowed opacity-40'
+      }`}
+      aria-disabled={currentPage === 1}
+    >
+      Prev
+    </a>
+    {pages.map((page) => (
+      <a
+        href={createHref(page)}
+        class={`rounded-full px-3 py-2 text-sm font-medium transition-colors duration-150 ${
+          page === currentPage ? 'bg-primary text-white' : 'border border-slate-200 hover:bg-primary/10 hover:text-primary'
+        }`}
+        aria-current={page === currentPage ? 'page' : undefined}
+      >
+        {page}
+      </a>
+    ))}
+    <a
+      href={currentPage < totalPages ? createHref(currentPage + 1) : undefined}
+      class={`rounded-full border border-slate-200 px-3 py-2 text-sm transition-colors duration-150 ${
+        currentPage < totalPages ? 'hover:bg-primary/10 hover:text-primary' : 'cursor-not-allowed opacity-40'
+      }`}
+      aria-disabled={currentPage === totalPages}
+    >
+      Next
+    </a>
+  </nav>
+)}

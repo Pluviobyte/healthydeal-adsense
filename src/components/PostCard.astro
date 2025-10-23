@@ -1,0 +1,56 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type ContentEntry = CollectionEntry<
+  'healthy-eating' | 'clean-eating' | 'meal-prep' | 'healthy-recipes' | 'resources'
+>;
+
+interface PostCardProps {
+  post: ContentEntry;
+  showSection?: boolean;
+}
+
+const { post, showSection = false } = Astro.props as PostCardProps;
+const { data } = post;
+const postUrl = `/${post.collection}/${post.slug}/`;
+---
+<article class="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg">
+  {data.coverImage ? (
+    <a href={postUrl} class="relative block aspect-[16/10] overflow-hidden bg-slate-100">
+      <img
+        src={data.coverImage}
+        alt={data.title}
+        loading="lazy"
+        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+    </a>
+  ) : (
+    <a href={postUrl} class="flex aspect-[16/10] items-center justify-center bg-primary/5 text-sm font-semibold text-primary">
+      View Article
+    </a>
+  )}
+  <div class="flex flex-1 flex-col gap-4 p-6">
+    <div class="space-y-2">
+      {showSection && (
+        <a class="inline-flex text-xs font-semibold uppercase tracking-wide text-primary" href={`/${post.collection}/`}>
+          {post.collection.replace('-', ' ')}
+        </a>
+      )}
+      <a href={postUrl} class="text-lg font-semibold text-slate-900 group-hover:text-primary">
+        {data.title}
+      </a>
+      <p class="text-sm text-slate-600">{data.description}</p>
+    </div>
+    <div class="mt-auto flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+      <span>{new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+      {data.readingTime && <span>{data.readingTime} min read</span>}
+    </div>
+    {Array.isArray(data.tags) && data.tags.length > 0 && (
+      <div class="flex flex-wrap gap-2">
+        {data.tags.slice(0, 3).map((tag) => (
+          <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">{tag}</span>
+        ))}
+      </div>
+    )}
+  </div>
+</article>

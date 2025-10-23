@@ -1,0 +1,32 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface TOCProps {
+  headings?: MarkdownHeading[];
+  title?: string;
+}
+
+const {
+  headings = [],
+  title = 'On this page'
+} = Astro.props as TOCProps;
+
+const filteredHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+---
+{filteredHeadings.length > 0 && (
+  <aside class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">{title}</h2>
+    <nav aria-label="Table of contents" class="mt-4 space-y-2 text-sm text-slate-600">
+      {filteredHeadings.map((heading) => (
+        <a
+          href={`#${heading.slug}`}
+          class={`block rounded-md px-2 py-1 transition-colors duration-150 hover:bg-primary/10 hover:text-primary ${
+            heading.depth === 3 ? 'ml-4 text-xs' : ''
+          }`}
+        >
+          {heading.text}
+        </a>
+      ))}
+    </nav>
+  </aside>
+)}

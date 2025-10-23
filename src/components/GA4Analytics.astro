@@ -1,0 +1,93 @@
+---
+interface Props {
+  measurementId: string;
+}
+
+const { measurementId } = Astro.props;
+---
+
+<!-- Google Analytics 4 -->
+<script async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{measurementId}');
+</script>
+
+<!-- Google Analytics 4 - Enhanced Measurement -->
+<script>
+  // Page view tracking (automatic with gtag config above)
+
+  // Custom event tracking example
+  document.addEventListener('click', function(event) {
+    // Track outbound link clicks
+    if (event.target.tagName === 'A' && event.target.href) {
+      if (event.target.hostname !== window.location.hostname) {
+        gtag('event', 'click', {
+          event_category: 'outbound',
+          event_label: event.target.href,
+          transport_type: 'beacon'
+        });
+      }
+    }
+
+    // Track affiliate link clicks
+    if (event.target.href && event.target.href.includes('cleansimpleeats.com')) {
+      gtag('event', 'affiliate_click', {
+        event_category: 'affiliate',
+        event_label: 'clean_simple_eats',
+        value: 1
+      });
+    }
+  });
+
+  // Track scroll depth
+  let maxScroll = 0;
+  window.addEventListener('scroll', function() {
+    const scrollPercent = Math.round(
+      (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
+    );
+
+    if (scrollPercent > maxScroll && scrollPercent % 25 === 0) {
+      maxScroll = scrollPercent;
+      gtag('event', 'scroll', {
+        event_category: 'engagement',
+        event_label: scrollPercent + '%',
+        value: scrollPercent
+      });
+    }
+  });
+</script>
+
+<!-- Google Analytics 4 - Real-time monitoring -->
+<script>
+  // Track time on page
+  let startTime = Date.now();
+  let maxTimeOnPage = 0;
+
+  setInterval(function() {
+    const currentTime = Math.floor((Date.now() - startTime) / 1000);
+    maxTimeOnPage = Math.max(maxTimeOnPage, currentTime);
+
+    // Report time on page every 30 seconds
+    if (currentTime > 0 && currentTime % 30 === 0) {
+      gtag('event', 'engagement', {
+        event_category: 'time_on_page',
+        event_label: currentTime + 's',
+        value: currentTime
+      });
+    }
+  }, 5000);
+
+  // Send final time on page when user leaves
+  window.addEventListener('beforeunload', function() {
+    if (maxTimeOnPage > 0) {
+      gtag('event', 'time_on_page', {
+        event_category: 'engagement',
+        event_label: maxTimeOnPage + 's',
+        value: maxTimeOnPage
+      });
+    }
+  });
+</script>
