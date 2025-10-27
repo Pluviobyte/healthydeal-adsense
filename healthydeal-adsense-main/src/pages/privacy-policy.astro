@@ -1,0 +1,189 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildSeoMeta } from '../utils/seo';
+
+const site = Astro.site?.toString() ?? 'https://www.gencoser.com';
+const seo = buildSeoMeta({
+  title: 'Privacy Policy - Healthy Meal Hub',
+  description: 'Learn how Healthy Meal Hub protects your privacy. Our commitment to data security, transparency, and responsible information handling.',
+  url: `${site}/privacy-policy/`,
+  type: 'website'
+});
+---
+
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  canonical={seo.canonical}
+  meta={seo.meta}
+  bodyClass="privacy-policy-page"
+>
+  <article class="mx-auto w-full max-w-4xl px-4 py-12">
+    <div class="prose prose-slate max-w-none">
+      <header class="mb-12">
+        <h1 class="text-4xl font-bold text-slate-900 mb-4">Privacy Policy</h1>
+        <p class="text-lg text-slate-600">
+          Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </p>
+        <p class="text-slate-600">
+          At Healthy Meal Hub, we are committed to protecting your privacy and being transparent about how we collect, use, and protect your information.
+        </p>
+      </header>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Information We Collect</h2>
+
+        <h3 class="text-xl font-semibold text-slate-800 mb-4">Automatically Collected Information</h3>
+        <ul class="list-disc pl-6 mb-6 text-slate-600">
+          <li>IP address and general geographic location</li>
+          <li>Browser type, operating system, and device information</li>
+          <li>Pages visited, time spent, and click patterns</li>
+          <li>Referring website and search terms used</li>
+          <li>Cookies and similar tracking technologies</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold text-slate-800 mb-4">Voluntarily Provided Information</h3>
+        <ul class="list-disc pl-6 mb-6 text-slate-600">
+          <li>Email address (newsletter subscription)</li>
+          <li>Name and personal details (contact form)</li>
+          <li>Comments and feedback on our content</li>
+        </ul>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">How We Use Your Information</h2>
+        <ul class="list-disc pl-6 mb-6 text-slate-600">
+          <li><strong>To provide and maintain our service:</strong> Delivering the content and features you request</li>
+          <li><strong>To improve our website:</strong> Analyzing usage patterns to enhance user experience</li>
+          <li><strong>To communicate with you:</strong> Send newsletters, updates, and respond to inquiries</li>
+          <li><strong>To ensure security:</strong> Detect and prevent fraud, abuse, and security threats</li>
+          <li><strong>To comply with legal obligations:</strong> Meet applicable laws and regulations</li>
+        </ul>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Google AdSense and Third-Party Advertising</h2>
+        <p class="text-slate-600 mb-4">
+          Healthy Meal Hub uses Google AdSense to display advertisements. Google AdSense uses cookies and similar technologies to:
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-slate-600">
+          <li>Show ads based on your interests and previous visits to our site</li>
+          <li>Measure ad effectiveness and provide reporting</li>
+          <li>Prevent fraudulent clicks and impressions</li>
+        </ul>
+        <p class="text-slate-600 mb-4">
+          You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Google's Ads Settings</a> or the <a href="http://www.aboutads.info/choices/" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Network Advertising Initiative opt-out page</a>.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Google Analytics</h2>
+        <p class="text-slate-600 mb-4">
+          We use Google Analytics to understand how visitors interact with our website. Google Analytics collects information anonymously and reports website trends without identifying individual visitors.
+        </p>
+        <p class="text-slate-600">
+          You can opt out of Google Analytics by installing the <a href="https://tools.google.com/dlpage/gaoptout" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Google Analytics Opt-out Browser Add-on</a>.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Cookies and Tracking Technologies</h2>
+        <p class="text-slate-600 mb-4">
+          We use cookies and similar tracking technologies to enhance your experience on our website:
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-slate-600">
+          <li><strong>Essential cookies:</strong> Required for basic website functionality</li>
+          <li><strong>Analytics cookies:</strong> Help us understand how visitors use our site</li>
+          <li><strong>Advertising cookies:</strong> Used to display relevant advertisements</li>
+          <li><strong>Functional cookies:</strong> Remember your preferences and settings</li>
+        </ul>
+        <p class="text-slate-600">
+          You can control cookie settings through your browser preferences. Note that disabling certain cookies may affect website functionality.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Data Sharing and Disclosure</h2>
+        <p class="text-slate-600 mb-4">
+          We do not sell, trade, or otherwise transfer your personal information to third parties, except in the following circumstances:
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-slate-600">
+          <li>With trusted service providers who assist in operating our website (Google Analytics, AdSense)</li>
+          <li>When required by law or to protect our rights, property, or safety</li>
+          <li>In connection with a business transfer, merger, or sale of assets</li>
+          <li>With your explicit consent</li>
+        </ul>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Data Security</h2>
+        <p class="text-slate-600 mb-4">
+          We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Your Rights and Choices</h2>
+        <p class="text-slate-600 mb-4">
+          Depending on your location, you may have the following rights regarding your personal information:
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-slate-600">
+          <li><strong>Access:</strong> Request a copy of your personal information</li>
+          <li><strong>Correction:</strong> Request correction of inaccurate information</li>
+          <li><strong>Deletion:</strong> Request deletion of your personal information</li>
+          <li><strong>Portability:</strong> Request transfer of your data to another service</li>
+          <li><strong>Objection:</strong> Object to processing of your personal information</li>
+        </ul>
+        <p class="text-slate-600">
+          To exercise these rights, please contact us using the information provided below.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Children's Privacy</h2>
+        <p class="text-slate-600">
+          Our website is not directed to children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">International Data Transfers</h2>
+        <p class="text-slate-600">
+          Your personal information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your information in accordance with applicable data protection laws.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Changes to This Privacy Policy</h2>
+        <p class="text-slate-600">
+          We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page with an updated effective date.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-6">Contact Information</h2>
+        <p class="text-slate-600 mb-4">
+          If you have any questions about this Privacy Policy or our data practices, please contact us:
+        </p>
+        <div class="bg-slate-50 p-6 rounded-lg">
+          <p class="text-slate-600 mb-2">
+            <strong>Email:</strong> privacy@healthymealhub.com
+          </p>
+          <p class="text-slate-600 mb-2">
+            <strong>Website:</strong> <a href="/" class="text-primary hover:underline">www.gencoser.com</a>
+          </p>
+          <p class="text-slate-600">
+            <strong>Response Time:</strong> We will respond to your inquiry within 30 days.
+          </p>
+        </div>
+      </section>
+
+      <footer class="mt-16 pt-8 border-t border-slate-200">
+        <p class="text-sm text-slate-500 text-center">
+          This Privacy Policy is designed to comply with GDPR, CCPA, and other applicable privacy regulations.
+          By using Healthy Meal Hub, you acknowledge that you have read and understood this policy.
+        </p>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>

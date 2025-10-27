@@ -1,0 +1,48 @@
+---
+import ListingLayout from '../../layouts/ListingLayout.astro';
+import { SECTION_COPY, getSectionPosts, getFeaturedPosts, getTagFilters } from '../../utils/content';
+import { buildListingMeta, canonicalFromPath } from '../../utils/seo';
+import { buildListingSchema } from '../../utils/schema';
+
+const section = 'resources';
+const [allPosts, featuredPosts] = await Promise.all([
+  getSectionPosts(section),
+  getFeaturedPosts(section)
+]);
+
+const featuredSlugs = new Set(featuredPosts.map((post) => post.slug));
+const posts = allPosts.filter((post) => !featuredSlugs.has(post.slug));
+const filters = getTagFilters(allPosts);
+
+const site = Astro.site?.toString() ?? 'https://www.gencoser.com';
+const url = canonicalFromPath(site, '/resources/');
+
+const copy = SECTION_COPY[section];
+
+const seo = buildListingMeta({
+  title: `${copy.title} – Templates & Printables`,
+  description: copy.hero,
+  url,
+  keywords: ['meal planner', 'printable templates', 'grocery list', 'checklists']
+});
+
+const structuredData = buildListingSchema({
+  title: `${copy.title} Library`,
+  description: copy.description,
+  url,
+  items: allPosts,
+  site
+});
+---
+<ListingLayout
+  title={`${copy.title}: Planners & Checklists`}
+  description={copy.hero}
+  section={section}
+  posts={posts}
+  featured={featuredPosts}
+  canonical={seo.canonical}
+  meta={seo.meta}
+  structuredData={structuredData}
+  filters={filters}
+/>
+

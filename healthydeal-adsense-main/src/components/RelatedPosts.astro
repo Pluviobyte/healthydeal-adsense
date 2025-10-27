@@ -1,0 +1,39 @@
+---
+import PostCard from './PostCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+type ContentEntry = CollectionEntry<
+  'healthy-eating' | 'clean-eating' | 'meal-prep' | 'healthy-recipes' | 'resources'
+>;
+
+interface RelatedPostsProps {
+  posts: ContentEntry[];
+  title?: string;
+  currentSlug?: string;
+}
+
+const {
+  posts = [],
+  title = 'Related reads',
+  currentSlug
+} = Astro.props as RelatedPostsProps;
+
+const visiblePosts = posts
+  .filter((post) => (currentSlug ? post.slug !== currentSlug : true))
+  .slice(0, 4);
+---
+{visiblePosts.length > 0 && (
+  <section class="mt-12">
+    <div class="mb-6 flex items-center justify-between gap-4">
+      <h2 class="text-lg font-semibold text-slate-900">{title}</h2>
+      <a class="text-sm font-medium text-primary" href={`/${visiblePosts[0].collection}/`}>
+        View all →
+      </a>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2">
+      {visiblePosts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </section>
+)}

@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { SECTION_COPY, SECTIONS, getLatestPosts, getSectionPosts } from '../utils/content';
+import { buildHomeMeta } from '../utils/seo';
+
+const site = Astro.site?.toString() ?? 'https://www.gencoser.com';
+const seo = buildHomeMeta(site);
+
+const sectionPreviews = await Promise.all(
+  SECTIONS.filter((section) => section !== 'resources').map(async (section) => {
+    const posts = await getSectionPosts(section);
+    return { section, posts: posts.slice(0, 3) };
+  })
+);
+
+const latestPosts = await getLatestPosts(6);
+---
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  canonical={seo.canonical}
+  meta={seo.meta}
+  bodyClass="home-page"
+>
+  <section class="bg-gradient-to-b from-white via-white to-slate-50">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 lg:flex-row lg:items-center">
+      <div class="space-y-6 lg:w-1/2">
+        <span class="inline-flex rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+          Healthy Meal Hub
+        </span>
+        <h1 class="text-4xl font-bold leading-tight text-slate-900 md:text-5xl">
+          Clean eating guidance, meal prep systems, and healthy recipes that actually fit your week.
+        </h1>
+        <p class="text-lg text-slate-600">
+          Build a sustainable routine with evidence-backed nutrition tips, intentional grocery lists,
+          and make-ahead meals the whole family will love.
+        </p>
+        <div class="flex flex-wrap gap-3 text-sm font-semibold">
+          <a href="/healthy-eating/" class="rounded-full bg-primary px-5 py-3 text-white hover:bg-primary-dark">Start with Healthy Eating</a>
+          <a href="/meal-prep/meal-prep-for-beginners/" class="rounded-full border border-primary px-5 py-3 text-primary hover:bg-primary/10">
+            Meal Prep for Beginners
+          </a>
+        </div>
+      </div>
+      <div class="lg:w-1/2">
+        <div class="grid gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl md:grid-cols-2">
+          {sectionPreviews.map(({ section, posts }) => (
+            <div class="space-y-3">
+              <a href={`/${section}/`} class="text-sm font-semibold uppercase tracking-wide text-primary">
+                {SECTION_COPY[section].title}
+              </a>
+              <p class="text-sm text-slate-500">{SECTION_COPY[section].description}</p>
+              <ul class="space-y-2 text-sm text-slate-600">
+                {posts.map((post) => (
+                  <li>
+                    <a class="hover:text-primary" href={`/${post.collection}/${post.slug}/`}>
+                      {post.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <AdSlot position="top" enabled={true} />
+
+  <section class="mx-auto w-full max-w-6xl px-4 py-12">
+    <header class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-semibold text-slate-900">Latest insights</h2>
+        <p class="text-sm text-slate-500">Fresh guides, prep strategies, and seasonal recipes</p>
+      </div>
+      <a href="/healthy-recipes/" class="text-sm font-medium text-primary">
+        Browse recipes →
+      </a>
+    </header>
+    <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {latestPosts.map((post) => (
+        <PostCard post={post} showSection />
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-white">
+    <div class="mx-auto w-full max-w-6xl px-4 py-12">
+      <div class="grid gap-10 md:grid-cols-2">
+        {sectionPreviews.map(({ section }) => (
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-8 shadow-sm">
+            <h3 class="text-xl font-semibold text-slate-900">{SECTION_COPY[section].title} Hub</h3>
+            <p class="mt-2 text-sm text-slate-600">{SECTION_COPY[section].hero}</p>
+            <div class="mt-6 flex flex-wrap gap-3 text-sm font-medium">
+              <a href={`/${section}/`} class="rounded-full border border-primary px-4 py-2 text-primary hover:bg-primary/10">
+                Explore {SECTION_COPY[section].title}
+              </a>
+              {SECTION_COPY[section].related.map((related) => (
+                <a href={`/${related}/`} class="rounded-full border border-slate-200 px-4 py-2 text-slate-600 hover:border-primary hover:text-primary">
+                  {SECTION_COPY[related as keyof typeof SECTION_COPY].title}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-gradient-to-r from-primary/10 via-white to-primary/10">
+    <div class="mx-auto w-full max-w-4xl px-4 py-12">
+      <NewsletterForm />
+    </div>
+  </section>
+</BaseLayout>

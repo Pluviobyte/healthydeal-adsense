@@ -1,0 +1,63 @@
+---
+interface AdSlotProps {
+  position: 'top' | 'mid' | 'bottom' | 'inline' | 'listing';
+  enabled?: boolean;
+  slotId?: string;
+}
+
+const {
+  position,
+  enabled = false,
+  slotId
+} = Astro.props as AdSlotProps;
+
+const isProd = import.meta.env.PROD;
+const ADSENSE_CLIENT_ID =
+  import.meta.env.PUBLIC_ADSENSE_CLIENT_ID ??
+  import.meta.env.ADSENSE_CLIENT_ID ??
+  '';
+
+// Allow env-driven ad slot IDs per position; must be numeric per AdSense requirements
+const ENV_SLOTS: Record<string, string | undefined> = {
+  top: import.meta.env.PUBLIC_ADSENSE_SLOT_TOP,
+  mid: import.meta.env.PUBLIC_ADSENSE_SLOT_MID,
+  bottom: import.meta.env.PUBLIC_ADSENSE_SLOT_BOTTOM,
+  inline: import.meta.env.PUBLIC_ADSENSE_SLOT_INLINE,
+  listing: import.meta.env.PUBLIC_ADSENSE_SLOT_LISTING
+};
+const fallbackSlot = slotId ?? ENV_SLOTS[position];
+const slotIsValid = typeof fallbackSlot === 'string' && /^\d+$/.test(fallbackSlot);
+
+// Reserve space to reduce CLS
+const minHeights: Record<AdSlotProps['position'], number> = {
+  top: 300,
+  mid: 300,
+  bottom: 300,
+  inline: 280,
+  listing: 280
+};
+const minHeight = minHeights[position];
+---
+{enabled && (
+  <div class="my-8 flex justify-center">
+    {isProd && ADSENSE_CLIENT_ID && slotIsValid ? (
+      <div class="w-full" style={`min-height:${minHeight}px`}>
+        <ins
+          class="adsbygoogle block w-full"
+          style="display:block"
+          data-ad-client={ADSENSE_CLIENT_ID}
+          data-ad-slot={fallbackSlot}
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+        <script>
+          {`(adsbygoogle = window.adsbygoogle || []).push({});`}
+        </script>
+      </div>
+    ) : (
+      <div class="flex w-full items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-100 text-xs font-semibold uppercase tracking-wide text-slate-400" style={`min-height:${minHeight}px`}>
+        Ad Slot – {position}
+      </div>
+    )}
+  </div>
+)}

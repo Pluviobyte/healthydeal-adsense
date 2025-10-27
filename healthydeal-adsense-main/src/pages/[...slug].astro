@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostLayout from '../layouts/PostLayout.astro';
+import { SECTIONS, type Section } from '../utils/content';
+import { buildPostMeta } from '../utils/seo';
+
+export async function getStaticPaths() {
+  const paths = [];
+
+  // Generate paths for individual articles
+  for (const section of SECTIONS) {
+    const posts = await getCollection(section);
+    for (const post of posts) {
+      paths.push({
+        params: { slug: `${section}/${post.slug}` },
+        props: { post, section }
+      });
+    }
+  }
+
+  return paths;
+}
+
+interface Props {
+  post?: any;
+  section?: Section;
+}
+
+const { post, section } = Astro.props as Props;
+
+// If no post found, redirect to 404
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+// Build SEO metadata
+const site = Astro.site?.toString() ?? 'https://www.gencoser.com';
+const seo = buildPostMeta(post, site);
+
+// Load related posts
+const { loadRelatedPosts } = await import('../utils/content');
+const relatedPosts = await loadRelatedPosts({
+  section: post.collection as Section,
+  slug: post.slug,
+  tags: post.data.tags || [],
+  limit: 4
+});
+---
+
+<PostLayout
+  post={post}
+  relatedPosts={relatedPosts}
+/>

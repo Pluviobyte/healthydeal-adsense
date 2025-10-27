@@ -1,0 +1,63 @@
+---
+const currentYear = new Date().getFullYear();
+
+const footerLinks = [
+  {
+    heading: 'Sections',
+    links: [
+      { href: '/healthy-eating/', label: 'Healthy Eating' },
+      { href: '/clean-eating/', label: 'Clean Eating' },
+      { href: '/meal-prep/', label: 'Meal Prep' },
+      { href: '/healthy-recipes/', label: 'Healthy Recipes' }
+    ]
+  },
+  {
+    heading: 'Company',
+    links: [
+      { href: '/about/', label: 'About' },
+      { href: '/contact/', label: 'Contact' },
+      { href: '/resources/', label: 'Resources' },
+      { href: '/editorial-policy/', label: 'Editorial Policy' }
+    ]
+  },
+  {
+    heading: 'Policies',
+    links: [
+      { href: '/privacy-policy/', label: 'Privacy Policy' },
+      { href: '/terms/', label: 'Terms of Use' },
+      { href: '/affiliate-disclosure/', label: 'Affiliate Disclosure' },
+      { href: '/medical-disclaimer/', label: 'Medical Disclaimer' }
+    ]
+  }
+];
+---
+<footer class="border-t border-slate-200 bg-white">
+  <div class="mx-auto w-full max-w-6xl px-4 py-10 md:py-14">
+    <div class="grid gap-10 md:grid-cols-4">
+      <div class="md:col-span-2">
+        <a href="/" class="text-lg font-semibold text-slate-900">Healthy Meal Hub</a>
+        <p class="mt-3 text-sm text-slate-500">
+          Evidence-based nutrition guidance, weekly meal prep plans, and wholesome recipes designed to help you eat well without the overwhelm.
+        </p>
+        <p class="mt-4 text-xs text-slate-500">
+          Healthy Meal Hub participates in affiliate programs. Purchases through links may earn a commission at no extra cost to you. Content is for informational purposes only and is not medical advice.
+        </p>
+      </div>
+      {footerLinks.map((group) => (
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">{group.heading}</h3>
+          <ul class="mt-4 space-y-2 text-sm text-slate-600">
+            {group.links.map((link) => (
+              <li>
+                <a class="hover:text-primary" href={link.href}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <div class="mt-10 border-t border-slate-100 pt-6 text-xs text-slate-500">
+      © {currentYear} Healthy Meal Hub. All rights reserved.
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,13 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        { "type": "host", "value": "gencoser.com" }
+      ],
+      "destination": "https://www.gencoser.com/$1",
+      "statusCode": 308
+    }
+  ]
+}
+

@@ -1,0 +1,55 @@
+---
+import ListingLayout from '../../layouts/ListingLayout.astro';
+import { SECTION_COPY, getFeaturedPosts, getSectionPosts, getTagFilters } from '../../utils/content';
+import { buildListingMeta, canonicalFromPath } from '../../utils/seo';
+import { buildListingSchema } from '../../utils/schema';
+
+const section = 'meal-prep';
+const [allPosts, featuredPosts] = await Promise.all([
+  getSectionPosts(section),
+  getFeaturedPosts(section)
+]);
+
+const featuredSlugs = new Set(featuredPosts.map((post) => post.slug));
+const posts = allPosts.filter((post) => !featuredSlugs.has(post.slug));
+const filters = getTagFilters(allPosts);
+
+const site = Astro.site?.toString() ?? 'https://www.gencoser.com';
+const url = canonicalFromPath(site, '/meal-prep/');
+
+const copy = SECTION_COPY[section];
+
+const seo = buildListingMeta({
+  title: `${copy.title} Playbooks & Weekly Plans`,
+  description: copy.hero,
+  url,
+  keywords: ['meal prep', 'batch cooking', 'meal prep ideas', 'meal prep grocery list']
+});
+
+const structuredData = buildListingSchema({
+  title: `${copy.title} Library`,
+  description: copy.description,
+  url,
+  items: allPosts,
+  site
+});
+
+const tabs = [
+  { label: 'For Beginners', href: '/meal-prep/meal-prep-for-beginners/' },
+  { label: 'High Protein', href: '/meal-prep/high-protein-meal-prep/' },
+  { label: 'Vegan Ideas', href: '/meal-prep/vegan-meal-prep-ideas/' },
+  { label: 'Best Containers', href: '/meal-prep/best-meal-prep-containers/' }
+];
+---
+<ListingLayout
+  title={`${copy.title}: Systems, Grocery Lists & Templates`}
+  description={copy.hero}
+  section={section}
+  posts={posts}
+  featured={featuredPosts}
+  canonical={seo.canonical}
+  meta={seo.meta}
+  structuredData={structuredData}
+  filters={filters}
+  tabs={tabs}
+/>

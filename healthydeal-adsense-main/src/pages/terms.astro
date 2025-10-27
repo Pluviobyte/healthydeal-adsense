@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildSeoMeta, canonicalFromPath } from '../utils/seo';
+
+const site = Astro.site?.toString() ?? 'https://www.gencoser.com';
+const url = canonicalFromPath(site, '/terms/');
+
+const seo = buildSeoMeta({
+  title: 'Terms of Use',
+  description:
+    'Terms governing your use of this website, including acceptable use, intellectual property rights, disclaimers, and limitations of liability.',
+  url
+});
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Terms of Use',
+  url,
+  publisher: {
+    '@type': 'Organization',
+    name: 'Healthy Meal Hub'
+  }
+};
+---
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  canonical={seo.canonical}
+  meta={seo.meta}
+  structuredData={structuredData}
+  bodyClass="policy-page"
+>
+  <section class="bg-gradient-to-b from-white to-slate-50">
+    <div class="mx-auto w-full max-w-4xl space-y-6 px-4 py-12 md:py-16">
+      <header class="space-y-3">
+        <h1 class="text-3xl font-bold text-slate-900 md:text-4xl">Terms of Use</h1>
+        <p class="text-lg text-slate-600">
+          Please read these terms carefully. By accessing or using this website, you agree to be bound by these terms.
+        </p>
+      </header>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm space-y-6 text-slate-700">
+        <section>
+          <h2 class="text-xl font-semibold text-slate-900">Acceptable Use</h2>
+          <p class="mt-2">You agree not to misuse the site, attempt to interfere with its operation, or engage in unlawful activities.</p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold text-slate-900">Intellectual Property</h2>
+          <p class="mt-2">All content is owned by or licensed to Healthy Meal Hub and protected by applicable intellectual property laws.</p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold text-slate-900">Medical and Nutritional Information</h2>
+          <p class="mt-2">Content is for informational purposes only and not a substitute for professional advice.</p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold text-slate-900">Limitation of Liability</h2>
+          <p class="mt-2">To the fullest extent permitted by law, we are not liable for indirect, incidental, or consequential damages.</p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold text-slate-900">Changes to Terms</h2>
+          <p class="mt-2">We may update these terms from time to time. Continued use constitutes acceptance of the updated terms.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+

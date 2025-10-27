@@ -1,0 +1,55 @@
+---
+import ListingLayout from '../../layouts/ListingLayout.astro';
+import { SECTION_COPY, getFeaturedPosts, getSectionPosts, getTagFilters } from '../../utils/content';
+import { buildListingMeta, canonicalFromPath } from '../../utils/seo';
+import { buildListingSchema } from '../../utils/schema';
+
+const section = 'healthy-recipes';
+const [allPosts, featuredPosts] = await Promise.all([
+  getSectionPosts(section),
+  getFeaturedPosts(section)
+]);
+
+const featuredSlugs = new Set(featuredPosts.map((post) => post.slug));
+const posts = allPosts.filter((post) => !featuredSlugs.has(post.slug));
+const filters = getTagFilters(allPosts);
+
+const site = Astro.site?.toString() ?? 'https://www.gencoser.com';
+const url = canonicalFromPath(site, '/healthy-recipes/');
+
+const copy = SECTION_COPY[section];
+
+const seo = buildListingMeta({
+  title: `${copy.title} by Meal, Diet & Method`,
+  description: copy.hero,
+  url,
+  keywords: ['healthy recipes', 'meal prep recipes', 'healthy dinner', 'healthy breakfast']
+});
+
+const structuredData = buildListingSchema({
+  title: `${copy.title} Collection`,
+  description: copy.description,
+  url,
+  items: allPosts,
+  site
+});
+
+const tabs = [
+  { label: 'By Meal', href: '/healthy-recipes/healthy-breakfast-recipes/' },
+  { label: 'By Ingredient', href: '/healthy-recipes/healthy-chicken-recipes/' },
+  { label: 'By Diet', href: '/healthy-recipes/healthy-vegan-recipes/' },
+  { label: 'By Method', href: '/healthy-recipes/healthy-crockpot-recipes/' }
+];
+---
+<ListingLayout
+  title={`${copy.title}: Meal-Type, Diet & Cooking Method Hubs`}
+  description={copy.hero}
+  section={section}
+  posts={posts}
+  featured={featuredPosts}
+  canonical={seo.canonical}
+  meta={seo.meta}
+  structuredData={structuredData}
+  filters={filters}
+  tabs={tabs}
+/>

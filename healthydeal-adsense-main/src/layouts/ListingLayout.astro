@@ -1,0 +1,194 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import Pagination from '../components/Pagination.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import AdSlot from '../components/AdSlot.astro';
+import type { CollectionEntry } from 'astro:content';
+
+type ContentEntry = CollectionEntry<
+  'healthy-eating' | 'clean-eating' | 'meal-prep' | 'healthy-recipes' | 'resources'
+>;
+
+interface ListingLayoutProps {
+  title: string;
+  description: string;
+  section: string;
+  posts: ContentEntry[];
+  featured?: ContentEntry[];
+  canonical?: string;
+  meta?: Record<string, string>[];
+  structuredData?: unknown;
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    basePath: string;
+  };
+  filters?: string[];
+  tabs?: { label: string; href: string }[];
+}
+
+const {
+  title,
+  description,
+  section,
+  posts = [],
+  featured = [],
+  canonical,
+  meta = [],
+  structuredData,
+  pagination,
+  filters = [],
+  tabs = []
+} = Astro.props as ListingLayoutProps;
+
+const allPosts = [...featured, ...posts];
+---
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  meta={meta}
+  structuredData={structuredData}
+  bodyClass="listing-page"
+>
+  <section class="bg-gradient-to-b from-white to-slate-50">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 md:py-12">
+      <header class="max-w-3xl space-y-4">
+        <span class="inline-flex rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+          {section.replace('-', ' ')}
+        </span>
+        <h1 class="text-3xl font-semibold text-slate-900 md:text-4xl">{title}</h1>
+        <p class="text-lg text-slate-600">{description}</p>
+      </header>
+
+      {tabs.length > 0 && (
+        <div class="mt-8 overflow-x-auto">
+          <div class="flex gap-3">
+            {tabs.map((tab) => (
+              <a
+                href={tab.href}
+                class="whitespace-nowrap rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
+              >
+                {tab.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {filters.length > 0 && (
+        <div class="mt-8">
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Filter by topic</h2>
+          <div class="mt-3 flex flex-wrap gap-2" data-filter-group>
+            <button
+              type="button"
+              class="filter-btn rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-primary"
+              data-filter="all"
+            >
+              All
+            </button>
+            {filters.map((filter) => (
+              <button
+                type="button"
+                class="filter-btn rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:border-primary hover:text-primary"
+                data-filter={filter.toLowerCase()}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <AdSlot position="top" enabled={true} />
+
+      {featured.length > 0 && (
+        <section class="mt-10 grid gap-6 md:grid-cols-2">
+          {featured.map((post) => (
+            <PostCard post={post} showSection />
+          ))}
+        </section>
+      )}
+
+      <section class="mt-10 grid gap-6 md:grid-cols-2">
+        {posts.map((post) => (
+          <div data-tags={(post.data.tags ?? []).join(',').toLowerCase()}>
+            <PostCard post={post} showSection />
+          </div>
+        ))}
+      </section>
+
+      {pagination && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          basePath={pagination.basePath}
+        />
+      )}
+
+      <AdSlot position="mid" enabled={true} />
+
+      <div class="mt-12">
+        <NewsletterForm />
+      </div>
+
+      <AdSlot position="bottom" enabled={true} />
+
+      <section class="mt-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900">Explore more pillars</h2>
+        <p class="mt-2 text-sm text-slate-600">
+          Keep building your healthy routine with meal prep guides, clean eating tips, and wholesome recipes.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-3 text-sm font-medium text-primary">
+          <a href="/healthy-eating/" class="rounded-full bg-primary/10 px-4 py-2 hover:bg-primary/20">Healthy Eating</a>
+          <a href="/clean-eating/" class="rounded-full bg-primary/10 px-4 py-2 hover:bg-primary/20">Clean Eating</a>
+          <a href="/meal-prep/" class="rounded-full bg-primary/10 px-4 py-2 hover:bg-primary/20">Meal Prep</a>
+          <a href="/healthy-recipes/" class="rounded-full bg-primary/10 px-4 py-2 hover:bg-primary/20">Healthy Recipes</a>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  {filters.length > 0 && (
+    <script>
+      {`
+        const filterButtons = document.querySelectorAll('[data-filter-group] .filter-btn');
+        const cards = Array.from(document.querySelectorAll('[data-tags]'));
+
+        function setActive(activeButton) {
+          filterButtons.forEach((btn) => {
+            if (btn === activeButton) {
+              btn.classList.add('border-primary', 'text-primary');
+              btn.classList.remove('text-slate-600');
+            } else {
+              btn.classList.remove('border-primary', 'text-primary');
+              btn.classList.add('text-slate-600');
+            }
+          });
+        }
+
+        filterButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const filter = button.dataset.filter;
+            const filterValue = filter ? filter.toLowerCase() : 'all';
+            setActive(button);
+
+            cards.forEach((card) => {
+              if (!filter || filterValue === 'all') {
+                card.classList.remove('hidden');
+                return;
+              }
+              const tags = card.dataset.tags ?? '';
+              if (tags.split(',').some((tag) => tag.trim() === filterValue)) {
+                card.classList.remove('hidden');
+              } else {
+                card.classList.add('hidden');
+              }
+            });
+          });
+        });
+      `}
+    </script>
+  )}
+</BaseLayout>

@@ -1,0 +1,52 @@
+---
+const STORAGE_KEY = 'hmh_consent_v2';
+
+function getConsent() {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {}
+  return null;
+}
+
+const hasConsent = getConsent();
+---
+{!hasConsent && (
+  <div id="consent-banner" class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto w-full max-w-6xl px-4 py-4">
+      <div class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
+        <p class="text-sm text-slate-700">
+          We use cookies to improve your experience, analyze traffic, and show relevant ads. You can accept or reject optional cookies. See our <a href="/privacy-policy/" class="text-primary underline">Privacy Policy</a>.
+        </p>
+        <div class="flex gap-3">
+          <button id="consent-reject" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Reject all</button>
+          <button id="consent-accept" class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-dark">Accept all</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      {`
+        (function(){
+          var KEY='${STORAGE_KEY}';
+          function gtag(){window.dataLayer=window.dataLayer||[];window.dataLayer.push(arguments);} 
+          function updateConsent(granted){
+            var state = granted ? 'granted' : 'denied';
+            gtag('consent','update',{
+              ad_storage: state,
+              analytics_storage: state,
+              ad_user_data: state,
+              ad_personalization: state
+            });
+            try{localStorage.setItem(KEY, granted ? 'granted' : 'denied');}catch(e){}
+            var banner=document.getElementById('consent-banner');
+            if(banner) banner.parentNode.removeChild(banner);
+          }
+          var acc=document.getElementById('consent-accept');
+          var rej=document.getElementById('consent-reject');
+          if(acc) acc.addEventListener('click', function(){ updateConsent(true); });
+          if(rej) rej.addEventListener('click', function(){ updateConsent(false); });
+        })();
+      `}
+    </script>
+  </div>
+)}
+

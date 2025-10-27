@@ -1,0 +1,153 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+type MetaTag = Record<string, string>;
+type StructuredData = Record<string, unknown>;
+
+interface BaseLayoutProps {
+  title?: string;
+  description?: string;
+  lang?: string;
+  canonical?: string;
+  noIndex?: boolean;
+  meta?: MetaTag[];
+  structuredData?: StructuredData | StructuredData[];
+  bodyClass?: string;
+}
+
+const {
+  title = 'Healthy Meal Hub',
+  description = 'Evidence-based guides, meal plans, and recipes to make healthy eating effortless.',
+  lang = 'en',
+  canonical,
+  noIndex = false,
+  meta = [],
+  structuredData = [],
+  bodyClass = ''
+} = Astro.props as BaseLayoutProps;
+
+const GA_ID =
+  import.meta.env.PUBLIC_GA_ID ??
+  import.meta.env.GA_ID ??
+  '';
+const ADSENSE_CLIENT_ID =
+  import.meta.env.PUBLIC_ADSENSE_CLIENT_ID ??
+  import.meta.env.ADSENSE_CLIENT_ID ??
+  '';
+const defaultCanonical =
+  canonical ??
+  (Astro.site
+    ? new URL(Astro.url.pathname, Astro.site).toString()
+    : `https://www.gencoser.com${Astro.url.pathname}`);
+const structuredEntries = Array.isArray(structuredData)
+  ? structuredData
+  : [structuredData].filter(Boolean);
+// Global Organization & WebSite schema for E-E-A-T
+let globalSchemas: StructuredData[] = [];
+try {
+  const origin = new URL(defaultCanonical).origin;
+  globalSchemas = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Healthy Meal Hub',
+      url: origin,
+      logo: new URL('/favicon.svg', origin).toString()
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Healthy Meal Hub',
+      url: origin,
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${origin}/?q={search_term_string}`,
+        'query-input': 'required name=search_term_string'
+      }
+    }
+  ];
+} catch {}
+const isProd = import.meta.env.PROD;
+---
+<!DOCTYPE html>
+<html lang={lang} class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      {`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);} 
+        gtag('consent','default',{
+          ad_storage: 'denied',
+          analytics_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          wait_for_update: 500
+        });
+      `}
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={defaultCanonical} />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@600;700&display=swap"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <meta name="theme-color" content="#0f766e" />
+    <meta property="og:site_name" content="Healthy Meal Hub" />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+    {meta.map((attributes, index) => (
+      <meta {...attributes} key={index} />
+    ))}
+    {structuredEntries.map((entry) => (
+      <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+    ))}
+    {globalSchemas.map((entry) => (
+      <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+    ))}
+    {isProd && GA_ID && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+        <script>
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}', { send_page_view: true });`}
+        </script>
+      </>
+    )}
+    {isProd && ADSENSE_CLIENT_ID && (
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
+  </head>
+  <body class={`min-h-screen bg-slate-50 text-slate-900 flex flex-col ${bodyClass}`}>
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:bg-white focus:text-primary focus:px-4 focus:py-2 focus:rounded"
+    >
+      Skip to content
+    </a>
+    <Header currentPath={Astro.url.pathname} />
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+    <slot name="after-footer" />
+    <!-- Consent banner (CMP-lite for Consent Mode v2) -->
+    <script>
+      {`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);}`}
+    </script>
+    {import('../components/ConsentBanner.astro').then((m) => m.default({}))}
+  </body>
+</html>
