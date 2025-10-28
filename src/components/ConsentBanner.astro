@@ -23,29 +23,27 @@ const hasConsent = getConsent();
         </div>
       </div>
     </div>
-    <script>
-      {`
-        (function(){
-          var KEY='${STORAGE_KEY}';
-          function gtag(){window.dataLayer=window.dataLayer||[];window.dataLayer.push(arguments);} 
-          function updateConsent(granted){
-            var state = granted ? 'granted' : 'denied';
-            gtag('consent','update',{
-              ad_storage: state,
-              analytics_storage: state,
-              ad_user_data: state,
-              ad_personalization: state
-            });
-            try{localStorage.setItem(KEY, granted ? 'granted' : 'denied');}catch(e){}
-            var banner=document.getElementById('consent-banner');
-            if(banner) banner.parentNode.removeChild(banner);
-          }
-          var acc=document.getElementById('consent-accept');
-          var rej=document.getElementById('consent-reject');
-          if(acc) acc.addEventListener('click', function(){ updateConsent(true); });
-          if(rej) rej.addEventListener('click', function(){ updateConsent(false); });
-        })();
-      `}
+    <script define:vars={{ STORAGE_KEY }}>
+      (function(){
+        var KEY=STORAGE_KEY;
+        function gtag(){window.dataLayer=window.dataLayer||[];window.dataLayer.push(arguments);}
+        function updateConsent(granted){
+          var state = granted ? 'granted' : 'denied';
+          gtag('consent','update',{
+            ad_storage: state,
+            analytics_storage: state,
+            ad_user_data: state,
+            ad_personalization: state
+          });
+          try{localStorage.setItem(KEY, granted ? 'granted' : 'denied');}catch(e){}
+          var banner=document.getElementById('consent-banner');
+          if(banner) banner.parentNode.removeChild(banner);
+        }
+        var acc=document.getElementById('consent-accept');
+        var rej=document.getElementById('consent-reject');
+        if(acc) acc.addEventListener('click', function(){ updateConsent(true); });
+        if(rej) rej.addEventListener('click', function(){ updateConsent(false); });
+      })();
     </script>
   </div>
 )}
