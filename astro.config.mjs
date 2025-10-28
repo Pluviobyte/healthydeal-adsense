@@ -8,7 +8,9 @@ export default defineConfig({
   site: 'https://www.gencoser.com',
   integrations: [
     mdx(),
-    sitemap()
+    sitemap({
+      lastmod: new Date()
+    })
   ],
   markdown: {
     syntaxHighlight: 'prism',

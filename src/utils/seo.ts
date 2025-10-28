@@ -81,11 +81,13 @@ export function buildListingMeta({
 }
 
 export function buildHomeMeta(site: string): SeoResult {
+  const baseUrl = site.endsWith('/') ? site.slice(0, -1) : site;
   return buildSeoMeta({
     title: 'Healthy Meal Hub — Clean Eating, Meal Prep, and Wholesome Recipes',
     description:
       'Weekly meal prep plans, clean eating grocery lists, and healthy recipes to help you build a sustainable, delicious routine.',
-    url: site
+    url: site,
+    image: `${baseUrl}/images/og/home.jpg`
   });
 }
 

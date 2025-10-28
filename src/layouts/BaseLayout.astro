@@ -47,30 +47,45 @@ const structuredEntries = Array.isArray(structuredData)
   : [structuredData].filter(Boolean);
 // Global Organization & WebSite schema for E-E-A-T
 let globalSchemas: StructuredData[] = [];
+// Resolve origin for absolute URLs and default OG image
+let pageOrigin = '';
 try {
-  const origin = new URL(defaultCanonical).origin;
+  pageOrigin = new URL(defaultCanonical).origin;
   globalSchemas = [
     {
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: 'Healthy Meal Hub',
-      url: origin,
-      logo: new URL('/favicon.svg', origin).toString()
+      url: pageOrigin,
+      logo: pageOrigin ? new URL('/favicon.svg', pageOrigin).toString() : '/favicon.svg'
     },
     {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: 'Healthy Meal Hub',
-      url: origin,
+      url: pageOrigin,
       potentialAction: {
         '@type': 'SearchAction',
-        target: `${origin}/?q={search_term_string}`,
+        target: `${pageOrigin}/?q={search_term_string}`,
         'query-input': 'required name=search_term_string'
       }
     }
   ];
 } catch {}
 const isProd = import.meta.env.PROD;
+const defaultOgImage = pageOrigin
+  ? new URL('/images/og/home.jpg', pageOrigin).toString()
+  : '/images/og/home.jpg';
+const has = (key: string, value: string) => meta.some((m) => (m as any)[key] === value);
+const hasOgTitle = has('property', 'og:title');
+const hasOgDesc = has('property', 'og:description');
+const hasOgUrl = has('property', 'og:url');
+const hasOgType = has('property', 'og:type');
+const hasOgImage = has('property', 'og:image');
+const hasTwCard = has('name', 'twitter:card');
+const hasTwTitle = has('name', 'twitter:title');
+const hasTwDesc = has('name', 'twitter:description');
+const hasTwImage = has('name', 'twitter:image');
 ---
 <!DOCTYPE html>
 <html lang={lang} class="scroll-smooth">
@@ -100,9 +115,20 @@ const isProd = import.meta.env.PROD;
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@600;700&display=swap"
     />
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.svg" />
     <meta name="theme-color" content="#0f766e" />
     <meta property="og:site_name" content="Healthy Meal Hub" />
+    {/* Fallback OG/Twitter meta to ensure coverage if page didn't provide */}
+    {!hasOgTitle && <meta property="og:title" content={title} />}
+    {!hasOgDesc && <meta property="og:description" content={description} />}
+    {!hasOgUrl && <meta property="og:url" content={defaultCanonical} />}
+    {!hasOgType && <meta property="og:type" content="website" />}
+    {!hasOgImage && <meta property="og:image" content={defaultOgImage} />}
+    {!hasTwCard && <meta name="twitter:card" content="summary_large_image" />}
+    {!hasTwTitle && <meta name="twitter:title" content={title} />}
+    {!hasTwDesc && <meta name="twitter:description" content={description} />}
+    {!hasTwImage && <meta name="twitter:image" content={defaultOgImage} />}
     {noIndex && <meta name="robots" content="noindex, nofollow" />}
     {meta.map((attributes, index) => (
       <meta {...attributes} key={index} />

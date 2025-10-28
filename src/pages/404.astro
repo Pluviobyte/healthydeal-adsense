@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page Not Found - Healthy Meal Hub"
+  description="The page you're looking for doesn't exist. Explore our healthy eating guides and recipes."
+  noIndex={true}
+>
+  <div class="container mx-auto px-4 py-16 text-center">
+    <div class="max-w-2xl mx-auto">
+      <h1 class="text-6xl font-bold text-primary mb-4">404</h1>
+      <h2 class="text-3xl font-bold text-slate-900 mb-4">Page Not Found</h2>
+      <p class="text-lg text-slate-600 mb-8">
+        Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
+      </p>
+
+      <div class="mb-12">
+        <a
+          href="/"
+          class="inline-block bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary-dark transition"
+        >
+          Go to Homepage
+        </a>
+      </div>
+
+      <div class="text-left">
+        <h3 class="text-xl font-semibold text-slate-900 mb-4">Popular Pages:</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <a href="/healthy-eating/" class="block p-4 border border-slate-200 rounded-lg hover:border-primary hover:bg-slate-50 transition">
+            <h4 class="font-semibold text-primary mb-1">Healthy Eating</h4>
+            <p class="text-sm text-slate-600">Evidence-based nutrition guides</p>
+          </a>
+          <a href="/clean-eating/" class="block p-4 border border-slate-200 rounded-lg hover:border-primary hover:bg-slate-50 transition">
+            <h4 class="font-semibold text-primary mb-1">Clean Eating</h4>
+            <p class="text-sm text-slate-600">Whole foods and meal plans</p>
+          </a>
+          <a href="/meal-prep/" class="block p-4 border border-slate-200 rounded-lg hover:border-primary hover:bg-slate-50 transition">
+            <h4 class="font-semibold text-primary mb-1">Meal Prep</h4>
+            <p class="text-sm text-slate-600">Time-saving prep strategies</p>
+          </a>
+          <a href="/healthy-recipes/" class="block p-4 border border-slate-200 rounded-lg hover:border-primary hover:bg-slate-50 transition">
+            <h4 class="font-semibold text-primary mb-1">Healthy Recipes</h4>
+            <p class="text-sm text-slate-600">Nutritious and delicious meals</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
